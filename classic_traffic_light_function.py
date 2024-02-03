@@ -1,0 +1,2 @@
+
+def classic_trafficlight_function
