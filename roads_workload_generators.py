@@ -12,5 +12,6 @@ def random_generator():
 def weighted_generator(weights):
     return [randint(0, i) for i in weights]
 
+
 def weighted_generator_single_arrives(weights):
     return [min(1, randint(0, i)) for i in weights]

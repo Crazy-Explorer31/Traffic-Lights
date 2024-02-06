@@ -1,13 +1,21 @@
-from traffic_light import TrafficLight
+import time
 
 
 class Emulator:
-    def __init__(self, traffic_light, traffic_generator, roads_workload, finish_time):
+    def __init__(
+        self,
+        roads_workload,
+        traffic_light,
+        traffic_generator,
+        finish_time=120,
+        seconds_for_sleep=0,
+    ):
         self.roads_workload = roads_workload
         self.traffic_light = traffic_light
         self.traffic_generator = traffic_generator
         self.finish_time = finish_time
         self.current_time = 0
+        self.seconds_for_sleep = seconds_for_sleep
 
     def show_state(self):
         print(f"current time: {self.current_time}")
@@ -31,3 +39,5 @@ class Emulator:
             self.show_state()
 
             self.current_time += 1
+
+            time.sleep(self.seconds_for_sleep)
