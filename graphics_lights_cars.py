@@ -1,7 +1,7 @@
 import pygame
 
 class MyCar:
-    def init(self, direction, color, velocity, radius = 20):
+    def __init__(self, direction, color, velocity, radius = 20):
         self.is_in_field = True
         self.color = color
         self.radius = radius
