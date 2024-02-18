@@ -40,7 +40,7 @@ class MyCar:
 
 
 class TrafficLights:
-    def init (self, x, y, w, h, color):
+    def __init__(self, x, y, w, h, color):
         self.color = color
         self.x = x
         self.y = y
