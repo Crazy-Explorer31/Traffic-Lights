@@ -19,7 +19,7 @@ class Emulator:
 
     def show_state(self):
         print(f"current time: {self.current_time}")
-        print(f"roaworkload: {self.roads_workload}")
+        print(f"road workload: {self.roads_workload}")
         print(f"lights: {self.traffic_light.current_lights}")
         print()
 
