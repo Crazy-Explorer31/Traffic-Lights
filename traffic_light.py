@@ -10,9 +10,9 @@ class TrafficLight:  # TF below
         self.time_to_change = 0  # time to switching TF
         self.new_lights = [0, 0, 0, 0]
 
-    def update_lights(self, current_time):
+    def update_lights(self):
         if not self.delaying_mode:
-            self.new_lights = self.light_function(current_time, period=60)
+            self.new_lights = self.light_function(self.roads_workload)
             if self.new_lights != self.current_lights:
                 self.current_lights = [0, 0, 0, 0]
                 self.time_to_change = self.delay
