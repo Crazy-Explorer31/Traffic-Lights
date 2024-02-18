@@ -28,29 +28,39 @@ class Emulator:
         print()
 
     def update_cars_coordinates(self, new_cars):
-        for car_index in range(len(self.cars_coordinates)):
-            car = self.cars_coordinates[car_index]
-            if car.x > 1200 or car.y > 1200:
-                del self.cars_coordinates[car_index]
+        for direction in self.cars_coordinates.keys():
+            if len(self.cars_coordinates[direction]) > 0:
+                car = self.cars_coordinates[direction][-1]
+                if car.x > 1200 or car.y > 1200 or car.x < 0 or car.y < 0:
+                    del self.cars_coordinates[direction][-1]
 
-        if new_cars[0] == 1 and self.cars_coordinates["left"][-1].x != self.car_radius:
+        if new_cars[0] == 1 and (
+            len(self.cars_coordinates["left"]) == 0
+            or self.cars_coordinates["left"][-1].x != self.car_radius
+        ):
             self.cars_coordinates["left"].append(
                 Car("left", self.car_velocity, self.car_radius)
             )
-        if new_cars[1] == 1 and self.cars_coordinates["up"][-1].y != self.car_radius:
+
+        if new_cars[1] == 1 and (
+            len(self.cars_coordinates["up"]) == 0
+            or self.cars_coordinates["up"][-1].y != self.car_radius
+        ):
             self.cars_coordinates["up"].append(
                 Car("up", self.car_velocity, self.car_radius)
             )
-        if (
-            new_cars[2] == 1
-            and self.cars_coordinates["right"][-1].x != 1200 - self.car_radius
+
+        if new_cars[2] == 1 and (
+            len(self.cars_coordinates["right"]) == 0
+            or self.cars_coordinates["right"][-1].x != 1200 - self.car_radius
         ):
             self.cars_coordinates["right"].append(
                 Car("right", self.car_velocity, self.car_radius)
             )
-        if (
-            new_cars[3] == 1
-            and self.cars_coordinates["down"][-1].y != 1200 - self.car_radius
+
+        if new_cars[3] == 1 and (
+            len(self.cars_coordinates["down"]) == 0
+            or self.cars_coordinates["down"][-1].y != 1200 - self.car_radius
         ):
             self.cars_coordinates["down"].append(
                 Car("down", self.car_velocity, self.car_radius)
@@ -94,7 +104,7 @@ class Emulator:
     def move_car(self, direction, car_index):
         car = self.cars_coordinates[direction][car_index]
         if car_index == 0:
-            self.move_car_simple(self, direction, car_index)
+            self.move_car_simple(direction, car_index)
         else:
             if (
                 car.x + car.motion_vector[0]
@@ -109,7 +119,7 @@ class Emulator:
             self.cars_coordinates.values(), ["left", "up", "right", "down"]
         ):
             for car_index in range(len(cars)):
-                self.move_car(self, direction, car_index)
+                self.move_car(direction, car_index)
 
     def emulate(self):
         while self.current_time < self.finish_time:
