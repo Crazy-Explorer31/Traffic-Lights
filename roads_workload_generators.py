@@ -13,5 +13,16 @@ def weighted_generator(weights):
     return [randint(0, i) for i in weights]
 
 
-def weighted_generator_single_arrives(weights):
-    return [min(1, randint(0, i)) for i in weights]
+def weighted_generator_single_arrives(weights, intensity=1):
+    result = []
+
+    weights_sum = sum(weights)
+
+    for weight in weights:
+        rand_number = randint(1, weights_sum)
+        if rand_number <= weight * intensity:
+            result.append(1)
+        else:
+            result.append(0)
+
+    return result
