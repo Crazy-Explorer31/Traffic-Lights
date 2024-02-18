@@ -59,7 +59,7 @@ pygame.init()
 screen = pygame.display.set_mode((1200,1200))
 pygame.display.set_caption("Traffic lights")
 running = True
-background = pygame.image.load('images/road.jpeg')
+background = pygame.image.load('road.jpeg')
 
 my_car_1 = MyCar("up", 'Blue', 15)
 my_car_2 = MyCar("down", 'Blue', 25)
