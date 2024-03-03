@@ -1,43 +1,6 @@
 import pygame
 
-class MyCar:
-    def __init__(self, direction, color, velocity, radius = 20):
-        self.is_in_field = True
-        self.color = color
-        self.radius = radius
-        self.direction = direction
-        self.velocity = velocity
-        if (direction == "down"):
-            self.x = 500
-            self.y = radius
-            self.motion_vector = [0, velocity]
-        elif (direction == "up"):
-            self.x = 700
-            self.y = 1200 - radius
-            self.motion_vector = [0, -velocity] 
-        elif (direction == "right"):
-            self.x = radius
-            self.y = 700
-            self.motion_vector = [velocity, 0]
-        elif (direction == "left"):
-            self.x = 1200 - radius
-            self.y = 500
-            self.motion_vector = [-velocity, 0]
-        self.image = pygame.Surface((40, 40))
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y 
-    def do_motion(self):
-        self.x += self.motion_vector[0]
-        self.y += self.motion_vector[1]
-        # self.x = (self.x + self.motion_vector[0])%1200
-        # self.y = (self.y + self.motion_vector[1])%1200
-        self.rect.x = self.x
-        self.rect.y = self.y 
-
-    def draw(self, surface) :
-        pygame.draw.circle(surface, self.color, (self.x, self.y), self.radius)
-
+from car import Car
 
 class TrafficLights:
     def __init__(self, x, y, w, h, color):
@@ -61,10 +24,10 @@ pygame.display.set_caption("Traffic lights")
 running = True
 background = pygame.image.load('road.jpeg')
 
-my_car_1 = MyCar("up", 'Blue', 15)
-my_car_2 = MyCar("down", 'Blue', 25)
-my_car_3 = MyCar("right", 'Blue', 35)
-my_car_4 = MyCar("left", 'Blue', 25)
+my_car_1 = Car("up", 'Blue', 15)
+my_car_2 = Car("down", 'Blue', 25)
+my_car_3 = Car("right", 'Blue', 35)
+my_car_4 = Car("left", 'Blue', 25)
 
 x = 0
 time = 0
