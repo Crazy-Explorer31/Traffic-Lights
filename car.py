@@ -7,22 +7,22 @@ class Car:
         self.radius = radius
         self.direction = direction
         self.velocity = velocity
-        if (direction == "down"): # движение сверху вниз
+        if (direction == "up"): # движение сверху вниз
             self.x = 500
             self.y = radius
             self.motion_vector = [0, velocity]
 
-        elif (direction == "up"): # движение снизу вверх
+        elif (direction == "down"): # движение снизу вверх
             self.x = 700
             self.y = 1200 - radius
             self.motion_vector = [0, -velocity]
 
-        elif (direction == "right"): # движение слева направо
+        elif (direction == "left"): # движение слева направо
             self.x = radius
             self.y = 700
             self.motion_vector = [velocity, 0]
 
-        elif (direction == "left"): # движение справа налево
+        elif (direction == "right"): # движение справа налево
             self.x = 1200 - radius
             self.y = 500
             self.motion_vector = [-velocity, 0]
