@@ -140,7 +140,7 @@ if __name__ == "__main__":
         print(sum(roads))
         if sum(roads) < 100:
             print(roads, sum(roads))
-            with open("model.pkl", "wb") as f:
+            with open("model2.pkl", "wb") as f:
                 pickle.dump(winner, f)
                 f.close()
             break

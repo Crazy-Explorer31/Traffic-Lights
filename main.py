@@ -15,7 +15,7 @@ def main():
     roads_workload = [0, 0, 0, 0]
 
     light_function = light_functions.load_nn_light_function(
-        model_path="model/model.pkl",
+        model_path="model/model2.pkl",
         config_path="model/model-config"
     )
 
