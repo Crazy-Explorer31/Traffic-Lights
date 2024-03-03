@@ -1,3 +1,4 @@
+import pygame
 class TrafficLight:  # TF below
     def __init__(self, roads_workload, delay, light_function):
         self.roads_workload = (
@@ -30,3 +31,33 @@ class TrafficLight:  # TF below
                 self.time_to_next_change = self.light_changes_delay
             else:
                 self.time_to_change -= 1
+
+
+# upper_light = TrafficLights(401,380,200,20, 'Green')
+# lower_light = TrafficLights(601,800,200,20, 'Green')
+# left_light = TrafficLights(380,600,20,200, 'Red')
+# right_light = TrafficLights(800,400,20,200, 'Red')
+            
+
+# def change_color(self):
+#     if (self.color == 'Red'):
+#         self.color = 'Green'
+#     else:
+#         self.color = 'Red'
+
+# class TrafficLights:
+#     def __init__(self, x, y, w, h, color):
+#         self.color = color
+#         self.x = x
+#         self.y = y
+#         self.w = w
+#         self.h = h
+#     def change_color(self):
+#         if (self.color == 'Red'):
+#             self.color = 'Green'
+#         else:
+#             self.color = 'Red'
+#     def draw(self, surface) :
+#         pygame.draw.rect(surface, self.color, (self.x, self.y, self.w, self.h))
+    
+

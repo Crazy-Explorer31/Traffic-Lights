@@ -1,5 +1,19 @@
 from car import Car
 import time
+import pygame
+from traffic_light import TrafficLight
+
+# don't pay attention, this is needed for rendering
+
+clock = pygame.time.Clock()
+pygame.init()
+screen = pygame.display.set_mode((1200,1200))
+pygame.display.set_caption("Traffic lights")
+running = True
+background = pygame.image.load('road.jpeg')
+
+# end
+
 
 
 class Emulator:
@@ -111,25 +125,127 @@ class Emulator:
             for car_index in range(len(cars)):
                 self.move_car(self, direction, car_index)
 
-    def emulate(self):
-        while self.current_time < self.finish_time:
-            new_cars = self.traffic_generator()
-            self.update_cars_coordinates(new_cars)
 
-            for r in range(4):
-                self.roads_workload[r] += new_cars[r]
+    def draw_traffic_light(self, surface, location, col) :
+        if location == 0: 
+            x = 380
+            y = 600
+            w = 20
+            h = 200
+        elif location == 1:
+            x = 401
+            y = 601
+            w = 200
+            h = 20
+        elif location == 2:
+            x  = 800
+            y = 400
+            w = 20
+            h = 200
+        elif location == 3:
+            x  = 601
+            y = 800
+            w = 200
+            h = 20
+        if col == 0:
+            color = 'Red'
+        else: 
+            color = 'Green'
+        pygame.draw.rect(surface, color, (x, y, w, h))
 
-            self.traffic_light.update_lights(self.current_time)
 
-            # for i in range(4):
-            #     if self.traffic_light.current_lights[i] == 1:
-            #         if self.roads_workload[i] > 0:
-            #             self.roads_workload[i] -= 1
+    def emulate (self) :
 
-            self.do_global_move()
+        new_cars = self.traffic_generator()
+        self.update_cars_coordinates(new_cars)
 
-            self.show_state()
+        screen.blit(background, (0,0)) # updating screen
 
-            self.current_time += 1
+        for r in range(4):
+            self.roads_workload[r] += new_cars[r]
 
-            time.sleep(self.seconds_for_sleep)
+        self.traffic_light.update_lights(self.current_time)
+
+
+        # checking current light condition
+        for i in range (0,4): 
+            self.draw_traffic_light(screen, i, self.traffic_light.current_lights[i]) 
+
+
+
+        for k in self.cars_coordinates.keys(): # drawing cars
+            for car in self.cars_coordinates[k]:
+                car.draw(screen)
+
+        
+        for k in self.cars_coordinates.keys(): # checking collisions
+            for car in self.cars_coordinates[k]:
+                for k in self.cars_coordinates.keys():
+                    for caar in self.cars_coordinates[k]:
+                        if car!= caar and car.rect.colliderect(caar):
+                            car.motion_vector[1] = 0
+                            car.motion_vactor[0] = 0
+                            caar.motion_vector[0] = 0
+                            caar.motion_vector[1] = 0
+       
+
+        self.do_global_move() # move all cars
+        
+        self.show_state()
+
+        self.current_time += 1
+
+        time.sleep(self.seconds_for_sleep)
+                        
+        # time = (time + 1) % 80
+
+        for event in pygame.event.get(): # to exit the program correctly
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.quit()
+
+        pygame.display.update()
+        
+        clock.tick(20) # screen refresh rate
+
+
+
+    # def emulate(self):
+    #     while self.current_time < self.finish_time:
+    #         new_cars = self.traffic_generator()
+    #         self.update_cars_coordinates(new_cars)
+
+    #         for r in range(4):
+    #             self.roads_workload[r] += new_cars[r]
+
+    #         self.traffic_light.update_lights(self.current_time)
+
+    #         # for i in range(4):
+    #         #     if self.traffic_light.current_lights[i] == 1:
+    #         #         if self.roads_workload[i] > 0:
+    #         #             self.roads_workload[i] -= 1
+
+    #         self.do_global_move()
+
+    #         self.show_state()
+
+    #         self.current_time += 1
+
+    #         time.sleep(self.seconds_for_sleep)
+        
+
+# for light in lights:
+#     light.draw(screen)
+#     if time == 40:
+#         light.change_color()
+        
+ # for car in cars:
+        #         for caaaar in cars:
+        #             if car!= caaaar and car.rect.colliderect(caaaar):
+        #                 car.motion_vector[1] = 0
+        #                 caaaar.motion_vector[0] = 0
+            # if  (car.direction == "down" and (lights[0].color == 'Green' or car.y < 360 or car.y > 380)) or \
+            #     (car.direction == "left" and (lights[1].color == 'Green' or car.x < 802 or car.x > 840)) or \
+            #     (car.direction == "up" and (lights[2].color == 'Green' or car.y < 802 or car.y > 850)) or \
+            #     (car.direction == "right" and (lights[3].color == 'Green' or car.x < 360 or car.x > 380)):
+                

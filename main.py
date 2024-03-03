@@ -24,8 +24,8 @@ def main():
         traffic_generator=set_traffic_generator,
         finish_time=set_finish_time,
     )
-
-    simple_emulator.emulate()
+    while True:
+        simple_emulator.emulate()
 
 
 main()
