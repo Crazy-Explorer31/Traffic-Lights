@@ -2,9 +2,7 @@ from emulator import Emulator
 from traffic_light import TrafficLight
 import roads_workload_generators
 import light_functions
-import pickle
-import neat
-import os.path
+
 
 set_delay = 5
 set_light_function = light_functions.choose_max_light_function
@@ -14,25 +12,12 @@ set_finish_time = 1000
 
 def main():
 
-    with open("model/model.pkl", "rb") as f:
-        genome = pickle.load(f)
-
-    directory = os.path.dirname(__file__)
-    config_path = os.path.join(directory, "model/model-config")
-    config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                                neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                                config_path)
-
-    net = neat.nn.FeedForwardNetwork.create(genome, config)
-
-    def light_function(roads_workload):
-        output = net.activate(roads_workload)
-        if output[0] > 0:
-            return [1, 0, 1, 0]
-        else:
-            return [0, 1, 0, 1]
-
     roads_workload = [0, 0, 0, 0]
+
+    light_function = light_functions.load_nn_light_function(
+        model_path="model/model.pkl",
+        config_path="model/model-config"
+    )
 
     classic_traffic_light = TrafficLight(
         roads_workload=roads_workload,
