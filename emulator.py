@@ -14,8 +14,6 @@ background = pygame.image.load('road.jpeg')
 
 # end
 
-
-
 class Emulator:
     def __init__(
         self,
@@ -42,29 +40,40 @@ class Emulator:
         print()
 
     def update_cars_coordinates(self, new_cars):
-        for car_index in range(len(self.cars_coordinates)):
-            car = self.cars_coordinates[car_index]
-            if car.x > 1200 or car.y > 1200:
-                del self.cars_coordinates[car_index]
+        for direction in self.cars_coordinates.keys():
+            if len(self.cars_coordinates[direction]) > 0:
+                car = self.cars_coordinates[direction][0]
+                if car.x > 1200 or car.y > 1200 or car.x < 0 or car.y < 0: # TODO: 1200 -> FIELD_SIZE
+                    del self.cars_coordinates[direction][0] # deleting of the heading car,
+                                                            # if it's out of field
 
-        if new_cars[0] == 1 and self.cars_coordinates["left"][-1].x != self.car_radius:
+        if new_cars[0] == 1 and (
+            len(self.cars_coordinates["left"]) == 0
+            or self.cars_coordinates["left"][-1].x != self.car_radius
+        ):
             self.cars_coordinates["left"].append(
                 Car("left", self.car_velocity, self.car_radius)
             )
-        if new_cars[1] == 1 and self.cars_coordinates["up"][-1].y != self.car_radius:
+
+        if new_cars[1] == 1 and (
+            len(self.cars_coordinates["up"]) == 0
+            or self.cars_coordinates["up"][-1].y != self.car_radius
+        ):
             self.cars_coordinates["up"].append(
                 Car("up", self.car_velocity, self.car_radius)
             )
-        if (
-            new_cars[2] == 1
-            and self.cars_coordinates["right"][-1].x != 1200 - self.car_radius
+
+        if new_cars[2] == 1 and (
+            len(self.cars_coordinates["right"]) == 0
+            or self.cars_coordinates["right"][-1].x != 1200 - self.car_radius
         ):
             self.cars_coordinates["right"].append(
                 Car("right", self.car_velocity, self.car_radius)
             )
-        if (
-            new_cars[3] == 1
-            and self.cars_coordinates["down"][-1].y != 1200 - self.car_radius
+
+        if new_cars[3] == 1 and (
+            len(self.cars_coordinates["down"]) == 0
+            or self.cars_coordinates["down"][-1].y != 1200 - self.car_radius
         ):
             self.cars_coordinates["down"].append(
                 Car("down", self.car_velocity, self.car_radius)
@@ -72,43 +81,43 @@ class Emulator:
 
     def move_car_simple(self, direction, car_index):
         car = self.cars_coordinates[direction][car_index]
-        if car_index == 0:
-            if direction == "left":
-                if self.traffic_light.current_lights[0] and not (
-                    self.traffic_light.delaying_mode
-                ):
-                    self.cars_coordinates["left"][car_index].do_motion()
-                elif car.x != 400 - self.car_radius:
-                    self.cars_coordinates["left"][car_index].do_motion()
 
-            elif direction == "up":
-                if self.traffic_light.current_lights[1] and not (
-                    self.traffic_light.delaying_mode
-                ):
-                    self.cars_coordinates["up"][car_index].do_motion()
-                elif car.y != 400 - self.car_radius:
-                    self.cars_coordinates["up"][car_index].do_motion()
+        if direction == "left":
+            if self.traffic_light.current_lights[0] and not (
+                self.traffic_light.delaying_mode
+            ):
+                self.cars_coordinates["left"][car_index].do_motion()
+            elif car.x != 400 - self.car_radius:
+                self.cars_coordinates["left"][car_index].do_motion()
 
-            elif direction == "right":
-                if self.traffic_light.current_lights[2] and not (
-                    self.traffic_light.delaying_mode
-                ):
-                    self.cars_coordinates["right"][car_index].do_motion()
-                elif car.x != 800 + self.car_radius:
-                    self.cars_coordinates["right"][car_index].do_motion()
+        elif direction == "up":
+            if self.traffic_light.current_lights[1] and not (
+                self.traffic_light.delaying_mode
+            ):
+                self.cars_coordinates["up"][car_index].do_motion()
+            elif car.y != 400 - self.car_radius:
+                self.cars_coordinates["up"][car_index].do_motion()
 
-            elif direction == "down":
-                if self.traffic_light.current_lights[3] and not (
-                    self.traffic_light.delaying_mode
-                ):
-                    self.cars_coordinates["down"][car_index].do_motion()
-                elif car.y != 800 + self.car_radius:
-                    self.cars_coordinates["down"][car_index].do_motion()
+        elif direction == "right":
+            if self.traffic_light.current_lights[2] and not (
+                self.traffic_light.delaying_mode
+            ):
+                self.cars_coordinates["right"][car_index].do_motion()
+            elif car.x != 800 + self.car_radius:
+                self.cars_coordinates["right"][car_index].do_motion()
+
+        elif direction == "down":
+            if self.traffic_light.current_lights[3] and not (
+                self.traffic_light.delaying_mode
+            ):
+                self.cars_coordinates["down"][car_index].do_motion()
+            elif car.y != 800 + self.car_radius:
+                self.cars_coordinates["down"][car_index].do_motion()
 
     def move_car(self, direction, car_index):
         car = self.cars_coordinates[direction][car_index]
         if car_index == 0:
-            self.move_car_simple(self, direction, car_index)
+            self.move_car_simple(direction, car_index)
         else:
             if (
                 car.x + car.motion_vector[0]
@@ -123,7 +132,7 @@ class Emulator:
             self.cars_coordinates.values(), ["left", "up", "right", "down"]
         ):
             for car_index in range(len(cars)):
-                self.move_car(self, direction, car_index)
+                self.move_car(direction, car_index)
 
 
     def draw_traffic_light(self, surface, location, col) :
@@ -134,7 +143,7 @@ class Emulator:
             h = 200
         elif location == 1:
             x = 401
-            y = 601
+            y = 401
             w = 200
             h = 20
         elif location == 2:
@@ -178,15 +187,15 @@ class Emulator:
                 car.draw(screen)
 
         
-        for k in self.cars_coordinates.keys(): # checking collisions
-            for car in self.cars_coordinates[k]:
-                for k in self.cars_coordinates.keys():
-                    for caar in self.cars_coordinates[k]:
-                        if car!= caar and car.rect.colliderect(caar):
-                            car.motion_vector[1] = 0
-                            car.motion_vactor[0] = 0
-                            caar.motion_vector[0] = 0
-                            caar.motion_vector[1] = 0
+        # for k in self.cars_coordinates.keys(): # checking collisions
+        #     for car in self.cars_coordinates[k]:
+        #         for k in self.cars_coordinates.keys():
+        #             for caar in self.cars_coordinates[k]:
+        #                 if car!= caar and car.rect.colliderect(caar):
+        #                     car.motion_vector[1] = 0
+        #                     car.motion_vector[0] = 0
+        #                     caar.motion_vector[0] = 0
+        #                     caar.motion_vector[1] = 0
        
 
         self.do_global_move() # move all cars
@@ -207,45 +216,3 @@ class Emulator:
         pygame.display.update()
         
         clock.tick(20) # screen refresh rate
-
-
-
-    # def emulate(self):
-    #     while self.current_time < self.finish_time:
-    #         new_cars = self.traffic_generator()
-    #         self.update_cars_coordinates(new_cars)
-
-    #         for r in range(4):
-    #             self.roads_workload[r] += new_cars[r]
-
-    #         self.traffic_light.update_lights(self.current_time)
-
-    #         # for i in range(4):
-    #         #     if self.traffic_light.current_lights[i] == 1:
-    #         #         if self.roads_workload[i] > 0:
-    #         #             self.roads_workload[i] -= 1
-
-    #         self.do_global_move()
-
-    #         self.show_state()
-
-    #         self.current_time += 1
-
-    #         time.sleep(self.seconds_for_sleep)
-        
-
-# for light in lights:
-#     light.draw(screen)
-#     if time == 40:
-#         light.change_color()
-        
- # for car in cars:
-        #         for caaaar in cars:
-        #             if car!= caaaar and car.rect.colliderect(caaaar):
-        #                 car.motion_vector[1] = 0
-        #                 caaaar.motion_vector[0] = 0
-            # if  (car.direction == "down" and (lights[0].color == 'Green' or car.y < 360 or car.y > 380)) or \
-            #     (car.direction == "left" and (lights[1].color == 'Green' or car.x < 802 or car.x > 840)) or \
-            #     (car.direction == "up" and (lights[2].color == 'Green' or car.y < 802 or car.y > 850)) or \
-            #     (car.direction == "right" and (lights[3].color == 'Green' or car.x < 360 or car.x > 380)):
-                

@@ -3,7 +3,7 @@ from traffic_light import TrafficLight
 import roads_workload_generators
 import light_functions
 
-set_delay = 5
+set_delay = 50
 set_light_function = light_functions.classic_traffic_light_function
 set_traffic_generator = roads_workload_generators.random_generator
 set_finish_time = 120
