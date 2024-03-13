@@ -38,7 +38,7 @@
 # lights = [upper_light, right_light, lower_light, left_light]
 # cars = [
 #     my_car_1,
-#     my_car_2, 
+#     my_car_2,
 #     my_car_3,
 #     my_car_4
 #     ]
@@ -55,7 +55,7 @@
 #             (car.direction == "left" and (lights[1].color == 'Green' or car.x < 802 or car.x > 840)) or \
 #             (car.direction == "up" and (lights[2].color == 'Green' or car.y < 802 or car.y > 850)) or \
 #             (car.direction == "right" and (lights[3].color == 'Green' or car.x < 360 or car.x > 380)):
-            
+
 #             car.do_motion()
 
 #         for car in cars:
@@ -63,7 +63,7 @@
 #                 if car!= caaaar and car.rect.colliderect(caaaar):
 #                     car.motion_vector[1] = 0
 #                     caaaar.motion_vector[0] = 0
-                    
+
 #     time = (time + 1) % 80
 
 #     for event in pygame.event.get():
@@ -72,5 +72,5 @@
 #             pygame.quit()
 
 #     pygame.display.update()
-    
+
 #     clock.tick(20)

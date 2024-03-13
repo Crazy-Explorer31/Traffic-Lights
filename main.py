@@ -3,9 +3,20 @@ from traffic_light import TrafficLight
 import roads_workload_generators
 import light_functions
 
-set_delay = 50
+set_delay = 70
 set_light_function = light_functions.classic_traffic_light_function
-set_traffic_generator = roads_workload_generators.random_generator
+
+set_traffic_generator_n = 40
+set_traffic_generator_intensity = 0.5
+set_traffic_generator_intensity_weights = [1, 1, 1, 1]
+# set_traffic_generator = roads_workload_generators.get_weighted_generator_single_arrives(
+#     set_traffic_generator_intensity_weights,
+#     set_traffic_generator_intensity
+# )
+set_traffic_generator = roads_workload_generators.get_random_generator(
+    set_traffic_generator_n
+)
+
 set_finish_time = 120
 
 
