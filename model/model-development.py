@@ -91,7 +91,7 @@ def run(config_file):
     # population.add_reporter(stats)
 
     # Run for up to 100 generations.
-    winner = population.run(eval_genomes, 10)
+    winner = population.run(eval_genomes, 1)
 
     # show final stats
     # print('\nBest genome:\n{!s}'.format(winner))
