@@ -3,11 +3,18 @@ from traffic_light import TrafficLight
 import roads_workload_generators
 import light_functions
 
+set_delay = 70
+set_light_function = light_functions.classic_traffic_light_function
 
-set_delay = 5
-set_light_function = light_functions.choose_max_light_function
-set_traffic_generator = roads_workload_generators.low_intensity_random_generator
-set_finish_time = 1000
+set_traffic_generator_intensity = 0.13
+set_traffic_generator_intensity_weights = [100, 100, 100, 100]
+
+set_traffic_generator = roads_workload_generators.get_weighted_generator_single_arrives(
+    set_traffic_generator_intensity_weights,
+    set_traffic_generator_intensity
+)
+
+set_finish_time = 1_000
 
 
 def main():
@@ -31,9 +38,8 @@ def main():
         traffic_generator=set_traffic_generator,
         finish_time=set_finish_time,
     )
-
-    simple_emulator.emulate(show_stats=True)
-    print(roads_workload, sum(roads_workload))
+    while True:
+        simple_emulator.emulate()
 
 
 if __name__ == "__main__":
