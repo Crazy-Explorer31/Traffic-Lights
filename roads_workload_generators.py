@@ -12,11 +12,16 @@ def get_random_generator(n=40):
     return random_generator
 
 
-def get_weighted_generator(weights):
-    def weighted_generator():
-        return [randint(0, i) for i in weights]
+def low_intensity_random_generator():
+    r1 = randint(0, 4)
+    r2 = randint(0, 4)
+    r3 = randint(0, 4)
+    r4 = randint(0, 4)
+    return [r1 > 3, r2 > 3, r3 > 3, r4 > 3]
 
-    return weighted_generator
+
+def weighted_generator(weights):
+    return [randint(0, i) for i in weights]
 
 
 def get_weighted_generator_single_arrives(weights=[1, 1, 1, 1], intensity=1):

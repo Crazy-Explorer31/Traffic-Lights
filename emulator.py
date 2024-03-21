@@ -34,7 +34,7 @@ class Emulator:
         self.seconds_for_sleep = seconds_for_sleep
         self.cars_coordinates = {"left": [], "up": [], "right": [], "down": []}
         self.car_radius = 10
-        self.car_velocity = 5
+        self.car_velocity = 10
 
     def update_cars_coordinates(self, new_cars):
         for direction in self.cars_coordinates.keys():  # try to delete the heading car
@@ -163,7 +163,7 @@ class Emulator:
 
     def show_state(self):
         print(f"current time: {self.current_time}")
-        print(f"roads_workload: {self.roads_workload}")
+        print(f"road workload: {self.roads_workload}")
         print(f"lights: {self.traffic_light.current_lights}")
         print()
 
@@ -172,7 +172,6 @@ class Emulator:
 
         new_cars = self.traffic_generator()
         self.update_cars_coordinates(new_cars)
-
         for r in range(4):
             self.roads_workload[r] += new_cars[r]
 
@@ -201,7 +200,7 @@ class Emulator:
         #                     caar.motion_vector[0] = 0
         #                     caar.motion_vector[1] = 0
 
-        self.show_state()
+        # self.show_state()
 
         self.current_time += 1
 
@@ -216,4 +215,4 @@ class Emulator:
 
         pygame.display.update()
 
-        clock.tick(20)  # screen refresh rate
+        clock.tick(100)  # screen refresh rate
