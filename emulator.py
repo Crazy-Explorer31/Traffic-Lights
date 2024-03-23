@@ -1,16 +1,19 @@
 from car import Car
 import time
-import pygame
 from traffic_light import TrafficLight
 
-# actions for rendering
+set_visualization_enabled = True
 
-clock = pygame.time.Clock()
-pygame.init()
-screen = pygame.display.set_mode((1200, 1200))
-pygame.display.set_caption("Traffic lights")
-running = True
-background = pygame.image.load("road.jpeg")
+# actions for rendering (if visualization was enabled))
+if (set_visualization_enabled):
+    import pygame
+
+    clock = pygame.time.Clock()
+    pygame.init()
+    screen = pygame.display.set_mode((1200, 1200))
+    pygame.display.set_caption("Traffic lights")
+    running = True
+    background = pygame.image.load("road.jpeg")
 
 # end
 
@@ -44,7 +47,6 @@ class Emulator:
                     car.x > 1200 or car.y > 1200 or car.x < 0 or car.y < 0
                 ):  # TODO: 1200 -> FIELD_SIZE
                     del self.cars_coordinates[direction][0]
-
                     self.roads_workload[direcion_to_int[direction]] -= 1
 
         if new_cars[0] == 1 and (
@@ -54,6 +56,7 @@ class Emulator:
             self.cars_coordinates["left"].append(
                 Car("left", self.car_velocity, self.car_radius)
             )
+            self.roads_workload[0] += 1
 
         if new_cars[1] == 1 and (
             len(self.cars_coordinates["up"]) == 0
@@ -62,6 +65,7 @@ class Emulator:
             self.cars_coordinates["up"].append(
                 Car("up", self.car_velocity, self.car_radius)
             )
+            self.roads_workload[1] += 1
 
         if new_cars[2] == 1 and (
             len(self.cars_coordinates["right"]) == 0
@@ -70,6 +74,7 @@ class Emulator:
             self.cars_coordinates["right"].append(
                 Car("right", self.car_velocity, self.car_radius)
             )
+            self.roads_workload[2] += 1
 
         if new_cars[3] == 1 and (
             len(self.cars_coordinates["down"]) == 0
@@ -78,6 +83,7 @@ class Emulator:
             self.cars_coordinates["down"].append(
                 Car("down", self.car_velocity, self.car_radius)
             )
+            self.roads_workload[3] += 1
 
     def move_car_simple(self, direction, car_index):
         car = self.cars_coordinates[direction][car_index]
@@ -172,47 +178,44 @@ class Emulator:
 
         new_cars = self.traffic_generator()
         self.update_cars_coordinates(new_cars)
-        for r in range(4):
-            self.roads_workload[r] += new_cars[r]
 
         self.do_global_move()  # move all cars
 
         self.traffic_light.update_lights(self.current_time)
 
         # Visualization
+        if (set_visualization_enabled):
 
-        screen.blit(background, (0, 0))  # updating screen
+            screen.blit(background, (0, 0))  # updating screen
 
-        for i in range(0, 4):  # drawing of traffic lights
-            self.draw_traffic_light(screen, i, self.traffic_light.current_lights[i])
+            for i in range(0, 4):  # drawing of traffic lights
+                self.draw_traffic_light(screen, i, self.traffic_light.current_lights[i])
 
-        for k in self.cars_coordinates.keys():  # drawing of cars
-            for car in self.cars_coordinates[k]:
-                car.draw(screen)
+            for k in self.cars_coordinates.keys():  # drawing of cars
+                for car in self.cars_coordinates[k]:
+                    car.draw(screen)
 
-        # for k in self.cars_coordinates.keys(): # checking collisions (unlucky)
-        #     for car in self.cars_coordinates[k]:
-        #         for k in self.cars_coordinates.keys():
-        #             for caar in self.cars_coordinates[k]:
-        #                 if car!= caar and car.rect.colliderect(caar):
-        #                     car.motion_vector[1] = 0
-        #                     car.motion_vector[0] = 0
-        #                     caar.motion_vector[0] = 0
-        #                     caar.motion_vector[1] = 0
+            # for k in self.cars_coordinates.keys(): # checking collisions (unlucky)
+            #     for car in self.cars_coordinates[k]:
+            #         for k in self.cars_coordinates.keys():
+            #             for caar in self.cars_coordinates[k]:
+            #                 if car!= caar and car.rect.colliderect(caar):
+            #                     car.motion_vector[1] = 0
+            #                     car.motion_vector[0] = 0
+            #                     caar.motion_vector[0] = 0
+            #                     caar.motion_vector[1] = 0
 
-        # self.show_state()
+            # self.show_state()
+
+            for event in pygame.event.get():  # to exit the program correctly
+                if event.type == pygame.QUIT:
+                    running = False
+                    pygame.quit()
+
+            pygame.display.update()
+
+            clock.tick(100)  # screen refresh rate
 
         self.current_time += 1
 
         time.sleep(self.seconds_for_sleep)
-
-        # time = (time + 1) % 80
-
-        for event in pygame.event.get():  # to exit the program correctly
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-
-        pygame.display.update()
-
-        clock.tick(100)  # screen refresh rate
