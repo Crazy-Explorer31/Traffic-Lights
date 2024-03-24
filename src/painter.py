@@ -8,7 +8,7 @@ class Painter:
             pygame.init()
             self.clock = pygame.time.Clock()
             self.screen = pygame.display.set_mode((1200, 1200))
-            self.background = pygame.image.load("road.jpeg")
+            self.background = pygame.image.load("../inc/road.jpeg")
             pygame.display.set_caption("Traffic lights")
 
     def draw_traffic_light(self, location, color):
