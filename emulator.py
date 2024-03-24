@@ -26,6 +26,7 @@ class Emulator:
         self.car_radius = 10
         self.car_velocity = 10
         self.painter = Painter(set_visualization_enabled)
+        self.totally_generated = 0
 
     def update_cars_coordinates(self, new_cars):
         for direction in self.cars_coordinates.keys():  # try to delete the heading car
@@ -45,6 +46,7 @@ class Emulator:
                 Car("left", self.car_velocity, self.car_radius)
             )
             self.roads_workload[0] += 1
+            self.totally_generated += 1
 
         if new_cars[1] == 1 and (
             len(self.cars_coordinates["up"]) == 0
@@ -54,6 +56,7 @@ class Emulator:
                 Car("up", self.car_velocity, self.car_radius)
             )
             self.roads_workload[1] += 1
+            self.totally_generated += 1
 
         if new_cars[2] == 1 and (
             len(self.cars_coordinates["right"]) == 0
@@ -63,6 +66,7 @@ class Emulator:
                 Car("right", self.car_velocity, self.car_radius)
             )
             self.roads_workload[2] += 1
+            self.totally_generated += 1
 
         if new_cars[3] == 1 and (
             len(self.cars_coordinates["down"]) == 0
@@ -72,6 +76,7 @@ class Emulator:
                 Car("down", self.car_velocity, self.car_radius)
             )
             self.roads_workload[3] += 1
+            self.totally_generated += 1
 
     def move_car_simple(self, direction, car_index):
         car = self.cars_coordinates[direction][car_index]
@@ -141,7 +146,7 @@ class Emulator:
         print(f"lights: {self.traffic_light.current_lights}")
         print()
 
-    def emulate(self):
+    def emulate(self, show_states=False):
 
         while self.current_time < self.finish_time:
             # Update of cars' condition
@@ -174,8 +179,9 @@ class Emulator:
 
                 self.painter.refresh_screen()
 
-            if self.current_time % 100 == 0:
-                self.show_state()
+            if show_states:
+                if self.current_time % 100 == 0:
+                    self.show_state()
 
             self.current_time += 1
 

@@ -7,7 +7,8 @@ set_delay = 70
 set_light_function = light_functions.classic_traffic_light_function
 
 set_traffic_generator_intensity = 0.15
-set_traffic_generator_intensity_weights = [100, 100, 100, 100]
+
+set_traffic_generator_intensity_weights = [400, 100, 400, 100]
 
 set_traffic_generator = roads_workload_generators.get_weighted_generator_single_arrives(
     set_traffic_generator_intensity_weights,
@@ -40,7 +41,7 @@ def main():
         set_visualization_enabled=True
     )
 
-    simple_emulator.emulate()
+    simple_emulator.emulate(show_states=True)
 
 
 if __name__ == "__main__":

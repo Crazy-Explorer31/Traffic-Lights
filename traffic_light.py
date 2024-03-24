@@ -1,6 +1,3 @@
-import pygame
-
-
 class TrafficLight:  # TF below
     def __init__(self, roads_workload, delay, light_function):
         self.roads_workload = (
