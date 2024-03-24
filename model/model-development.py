@@ -9,7 +9,7 @@ import pickle
 set_traffic_generator_intensity = 0.15
 set_traffic_generator_intensity_weights = [100, 100, 100, 100]
 
-traffic_generator = traffic_generators.get_weighted_generator_single_arrives(
+traffic_generator = traffic_generators.get_weighted_traffic_generator(
     set_traffic_generator_intensity_weights, set_traffic_generator_intensity
 )
 
