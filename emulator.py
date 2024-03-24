@@ -9,15 +9,15 @@ class Emulator:
 
     def __init__(
         self,
-        roads_workload,
         traffic_light,
         traffic_generator,
         finish_time=1000,
         seconds_for_sleep=0,
-        set_visualization_enabled=True
+        set_visualization_enabled=True,
     ):
-        self.roads_workload = roads_workload
+        self.roads_workload = [0, 0, 0, 0]
         self.traffic_light = traffic_light
+        self.used_light_function_name = traffic_light.light_function.__name__
         self.traffic_generator = traffic_generator
         self.finish_time = finish_time
         self.current_time = 0
@@ -155,7 +155,14 @@ class Emulator:
 
             self.do_global_move()  # move all cars
 
-            self.traffic_light.update_lights(self.current_time)
+            if self.used_light_function_name == "periodic_light_function":
+                self.traffic_light.update_lights(self.current_time)
+
+            elif self.used_light_function_name == "choose_max_light_function":
+                self.traffic_light.update_lights(self.roads_workload)
+
+            elif self.used_light_function_name == "nn_light_function":
+                self.traffic_light.update_lights(self.roads_workload)
 
             # Visualization
             if self.painter.visualization_enabled:

@@ -2,7 +2,6 @@ import pygame
 
 
 class Painter:
-
     def __init__(self, visualization_enabled):
         self.visualization_enabled = visualization_enabled
         if visualization_enabled:

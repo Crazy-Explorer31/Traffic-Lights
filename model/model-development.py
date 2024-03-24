@@ -2,16 +2,15 @@ import os.path
 import neat
 from emulator import Emulator
 from traffic_light import TrafficLight
-import roads_workload_generators
+import traffic_generators
 import pickle
 
 
 set_traffic_generator_intensity = 0.15
 set_traffic_generator_intensity_weights = [100, 100, 100, 100]
 
-traffic_generator = roads_workload_generators.get_weighted_generator_single_arrives(
-    set_traffic_generator_intensity_weights,
-    set_traffic_generator_intensity
+traffic_generator = traffic_generators.get_weighted_generator_single_arrives(
+    set_traffic_generator_intensity_weights, set_traffic_generator_intensity
 )
 
 
@@ -24,7 +23,7 @@ def eval_genomes(genomes, config):
     set_delay = 70
     set_finish_time = 10000
 
-    part_time = set_finish_time/100
+    part_time = set_finish_time / 100
 
     for genome_id, genome in genomes:
         genome.fitness = 0
@@ -51,7 +50,7 @@ def eval_genomes(genomes, config):
             traffic_light=traffic_light_sample,
             traffic_generator=traffic_generator,
             finish_time=part_time,
-            set_visualization_enabled=False
+            set_visualization_enabled=False,
         )
 
         emulators.append(emulator_sample)
@@ -62,14 +61,20 @@ def eval_genomes(genomes, config):
             emulator.current_time = 0
             emulator.emulate()
             result = sum(roads_to_emulators[index])
-            genomes_list[index].fitness += (30 - result) / 30  # best_fitness, max = 1, min = -1
+            genomes_list[index].fitness += (
+                30 - result
+            ) / 30  # best_fitness, max = 1, min = -1
 
 
 def run(config_file):
 
-    config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                                neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                                config_file)
+    config = neat.config.Config(
+        neat.DefaultGenome,
+        neat.DefaultReproduction,
+        neat.DefaultSpeciesSet,
+        neat.DefaultStagnation,
+        config_file,
+    )
 
     population = neat.Population(config)
 
@@ -93,9 +98,13 @@ if __name__ == "__main__":
     for t in range(100):
         winner = run(config_path)
 
-        config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                                    neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                                    config_path)
+        config = neat.config.Config(
+            neat.DefaultGenome,
+            neat.DefaultReproduction,
+            neat.DefaultSpeciesSet,
+            neat.DefaultStagnation,
+            config_path,
+        )
 
         network = neat.nn.FeedForwardNetwork.create(winner, config)
         roads = [0, 0, 0, 0]
@@ -111,7 +120,6 @@ if __name__ == "__main__":
             else:
                 return [0, 1, 0, 1]
 
-
         traffic_light_sample = TrafficLight(
             roads_workload=roads,
             delay=set_delay,
@@ -123,7 +131,7 @@ if __name__ == "__main__":
             traffic_light=traffic_light_sample,
             traffic_generator=traffic_generator,
             finish_time=set_finish_time,
-            set_visualization_enabled=False
+            set_visualization_enabled=False,
         )
         emulator.emulate()
         print(sum(roads))
