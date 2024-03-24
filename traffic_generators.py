@@ -12,7 +12,7 @@ def get_uniform_traffic_generator(n=20):
     return uniform_generator
 
 
-def get_weighted_traffic_generator(weights=[1, 1, 1, 1], intensity=1):
+def get_weighted_traffic_generator(weights, intensity):
     def weighted_traffic_generator():
         result = []
 
