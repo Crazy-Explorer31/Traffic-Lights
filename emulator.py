@@ -1,33 +1,20 @@
 from car import Car
 import time
-from traffic_light import TrafficLight
-
-set_visualization_enabled = True
-
-# actions for rendering (if visualization was enabled))
-if (set_visualization_enabled):
-    import pygame
-
-    clock = pygame.time.Clock()
-    pygame.init()
-    screen = pygame.display.set_mode((1200, 1200))
-    pygame.display.set_caption("Traffic lights")
-    running = True
-    background = pygame.image.load("road.jpeg")
-
-# end
-
-direcion_to_int = {"left": 0, "up": 1, "right": 2, "down": 3}
+from painter import Painter
 
 
 class Emulator:
+
+    direction_to_int = {"left": 0, "up": 1, "right": 2, "down": 3}
+
     def __init__(
         self,
         roads_workload,
         traffic_light,
         traffic_generator,
-        finish_time=120,
+        finish_time=1000,
         seconds_for_sleep=0,
+        set_visualization_enabled=True
     ):
         self.roads_workload = roads_workload
         self.traffic_light = traffic_light
@@ -38,6 +25,7 @@ class Emulator:
         self.cars_coordinates = {"left": [], "up": [], "right": [], "down": []}
         self.car_radius = 10
         self.car_velocity = 10
+        self.painter = Painter(set_visualization_enabled)
 
     def update_cars_coordinates(self, new_cars):
         for direction in self.cars_coordinates.keys():  # try to delete the heading car
@@ -47,7 +35,7 @@ class Emulator:
                     car.x > 1200 or car.y > 1200 or car.x < 0 or car.y < 0
                 ):  # TODO: 1200 -> FIELD_SIZE
                     del self.cars_coordinates[direction][0]
-                    self.roads_workload[direcion_to_int[direction]] -= 1
+                    self.roads_workload[self.direction_to_int[direction]] -= 1
 
         if new_cars[0] == 1 and (
             len(self.cars_coordinates["left"]) == 0
@@ -147,26 +135,6 @@ class Emulator:
             for car_index in range(len(cars)):
                 self.move_car(direction, car_index)
 
-    def draw_traffic_light(self, surface, location, color_int):
-        if location == 0:
-            (x, y, width, height) = (380, 598, 20, 200)
-
-        elif location == 1:
-            (x, y, width, height) = (400, 380, 200, 20)
-
-        elif location == 2:
-            (x, y, width, height) = (800, 401, 20, 200)
-
-        elif location == 3:
-            (x, y, width, height) = (600, 798, 200, 20)
-
-        color = "Green" if color_int == 1 else "Red"
-
-        if self.traffic_light.delaying_mode and color_int:
-            color = "Yellow"
-
-        pygame.draw.rect(surface, color, (x, y, width, height))
-
     def show_state(self):
         print(f"current time: {self.current_time}")
         print(f"road workload: {self.roads_workload}")
@@ -174,48 +142,41 @@ class Emulator:
         print()
 
     def emulate(self):
-        # Update of cars' condition
 
-        new_cars = self.traffic_generator()
-        self.update_cars_coordinates(new_cars)
+        while self.current_time < self.finish_time:
+            # Update of cars' condition
+            new_cars = self.traffic_generator()
+            self.update_cars_coordinates(new_cars)
 
-        self.do_global_move()  # move all cars
+            self.do_global_move()  # move all cars
 
-        self.traffic_light.update_lights(self.current_time)
+            self.traffic_light.update_lights(self.current_time)
 
-        # Visualization
-        if (set_visualization_enabled):
+            # Visualization
+            if self.painter.visualization_enabled:
 
-            screen.blit(background, (0, 0))  # updating screen
+                self.painter.update_screen()
 
-            for i in range(0, 4):  # drawing of traffic lights
-                self.draw_traffic_light(screen, i, self.traffic_light.current_lights[i])
+                for i in range(0, 4):  # drawing of traffic lights
+                    light_color = "Red"
+                    if self.traffic_light.delaying_mode:
+                        light_color = "Yellow"
+                    elif self.traffic_light.current_lights[i] == 1:
+                        light_color = "Green"
 
-            for k in self.cars_coordinates.keys():  # drawing of cars
-                for car in self.cars_coordinates[k]:
-                    car.draw(screen)
+                    self.painter.draw_traffic_light(i, light_color)
 
-            # for k in self.cars_coordinates.keys(): # checking collisions (unlucky)
-            #     for car in self.cars_coordinates[k]:
-            #         for k in self.cars_coordinates.keys():
-            #             for caar in self.cars_coordinates[k]:
-            #                 if car!= caar and car.rect.colliderect(caar):
-            #                     car.motion_vector[1] = 0
-            #                     car.motion_vector[0] = 0
-            #                     caar.motion_vector[0] = 0
-            #                     caar.motion_vector[1] = 0
+                for k in self.cars_coordinates.keys():  # drawing of cars
+                    for car_location in self.cars_coordinates[k]:
+                        self.painter.draw_car(car_location)
 
-            # self.show_state()
+                self.painter.check_for_quit()
 
-            for event in pygame.event.get():  # to exit the program correctly
-                if event.type == pygame.QUIT:
-                    running = False
-                    pygame.quit()
+                self.painter.refresh_screen()
 
-            pygame.display.update()
+            if self.current_time % 100 == 0:
+                self.show_state()
 
-            clock.tick(100)  # screen refresh rate
+            self.current_time += 1
 
-        self.current_time += 1
-
-        time.sleep(self.seconds_for_sleep)
+            time.sleep(self.seconds_for_sleep)
